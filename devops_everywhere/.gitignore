@@ -1,0 +1,30 @@
+# ============================
+# GITIGNORE
+# ============================
+
+# Cartella locale di Vagrant (non portabile)
+.vagrant/
+
+# File di log o temporanei
+*.log
+*.tmp
+*.bak
+*.swp
+*~
+
+# File generati automaticamente
+.DS_Store
+Thumbs.db
+
+# Backup o file di output casuali
+*.out
+*.lock
+
+# Cartelle o file personali
+.vscode/
+.idea/
+
+# Se in futuro aggiungi script o output di test:
+# /output/
+# /tmp/
+
