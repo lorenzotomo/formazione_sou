@@ -11,15 +11,3 @@
 *.bak
 *.swp
 *~
-
-# File generati automaticamente
-.DS_Store
-Thumbs.db
-
-# Backup o file di output casuali
-*.out
-*.lock
-
-# Cartelle o file personali
-.vscode/
-.idea/
