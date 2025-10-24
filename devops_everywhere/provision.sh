@@ -9,10 +9,8 @@ sudo apt-get install -y apache2
 
 sudo systemctl enable apache2
 
-# Crea una cartella personalizzata per il nostro sito
 sudo mkdir -p /var/www/devops_apache
 
-# Crea una pagina HTML personalizzata
 sudo tee /var/www/devops_apache/index.html > /dev/null <<'EOF'
 <!DOCTYPE html>
 <html lang="it">
@@ -26,7 +24,7 @@ sudo tee /var/www/devops_apache/index.html > /dev/null <<'EOF'
   </style>
 </head>
 <body>
-  <h1>🔥 DevOps Everywhere - Apache Edition</h1>
+  <h1>DevOps Everywhere - Apache Edition</h1>
   <p>Questa pagina è stata generata automaticamente dal provisioning Vagrant + Bash.</p>
   <p>Server: <strong>Apache2</strong></p>
   <p>Accesso: <a href="http://localhost:8080" style="color:#9df;">http://localhost:8080</a></p>
@@ -34,7 +32,6 @@ sudo tee /var/www/devops_apache/index.html > /dev/null <<'EOF'
 </html>
 EOF
 
-# Crea un VirtualHost per il nostro sito
 sudo tee /etc/apache2/sites-available/devops_apache.conf > /dev/null <<'EOF'
 <VirtualHost *:80>
     ServerAdmin webmaster@localhost
@@ -44,12 +41,10 @@ sudo tee /etc/apache2/sites-available/devops_apache.conf > /dev/null <<'EOF'
 </VirtualHost>
 EOF
 
-# Abilita il nuovo sito e disabilita quello di default
 sudo a2dissite 000-default.conf
 sudo a2ensite devops_apache.conf
 
-# Ricarica Apache per applicare i cambiamenti
 sudo systemctl reload apache2
 
-echo "✅ Provisioning completato! Apri http://localhost:8080"
+echo "Provisioning completato! Apri http://localhost:8080"
 

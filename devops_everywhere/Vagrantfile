@@ -1,18 +1,13 @@
 Vagrant.configure("2") do |config|
-  # Sistema operativo base
   config.vm.box = "ubuntu/focal64"
 
-  # Nome e porta
   config.vm.hostname = "devops-apache"
   config.vm.network "forwarded_port", guest: 80, host: 8080
 
-  # Sincronizza la cartella corrente nella VM
   config.vm.synced_folder ".", "/vagrant"
 
-  # Provisioning tramite shell script
   config.vm.provision "shell", path: "provision.sh"
 
-  # Impostazioni VirtualBox
   config.vm.provider "virtualbox" do |vb|
     vb.name = "DevOpsApache"
     vb.memory = 512
