@@ -23,8 +23,3 @@ Thumbs.db
 # Cartelle o file personali
 .vscode/
 .idea/
-
-# Se in futuro aggiungi script o output di test:
-# /output/
-# /tmp/
-
