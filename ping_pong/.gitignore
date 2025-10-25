@@ -1,0 +1,9 @@
+.vagrant/
+ping_pong/.vagrant/
+*.pem
+*.key
+*.private
+*.log
+*.tmp
+*.swp
+.DS_Store
