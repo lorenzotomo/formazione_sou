@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-echo "🚀 Inizio provisioning: installazione Apache e creazione pagina web"
+echo "Inizio provisioning: installazione Apache e creazione pagina web"
 
 sudo apt-get update -y
 
