@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Uso: ./portscanner.sh TARGET PORT_RANGE
+#Utilizzo: ./portscanner.sh TARGET PORT_RANGE
 
 if [ $# -ne 2 ]; then
   echo "Devi specificare un ip target ed una porta o un range di porte (es. 1-1024)"
@@ -36,6 +36,6 @@ for ((port=START; port<=END; port++)); do
   if nc -w 1 "$TARGET" "$port" >/dev/null 2>&1; then
     echo "Porta $port: Aperta"
   else
-    echo "Porta $port: Chiusa o filtrata"
+    echo "Porta $port: Chiusa"
   fi
 done
