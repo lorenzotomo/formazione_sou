@@ -1,0 +1,26 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Controllo giorno e Build') {
+            steps {
+                script {
+                    def oggi = new Date()
+                    def numeroGiorno = oggi.format('u') as int
+
+                    echo "Oggi è il giorno numero ${numeroGiorno}"
+
+                    if (numeroGiorno < 6) {
+                        sh 'docker build -t immagine-test:latest .'
+
+                        echo "Immagine Docker buildata con successo!"
+
+                    } else {
+                        echo "Il weekend non ho voglia di lavorare!"
+                        currentBuild.result = 'UNSTABLE'
+                    }
+                }
+            }
+        }
+    }
+}

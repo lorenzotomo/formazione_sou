@@ -1,0 +1,27 @@
+pipeline {
+    agent any
+
+    parameters {
+        string(name: 'ENVIRONMENT', description: 'Inserisci DEVELOPMENT o PRODUCTION')
+    }
+
+    stages {
+        stage('DEVELOPMENT') {
+            when {
+                expression { params.ENVIRONMENT == 'DEVELOPMENT' }
+            }
+            steps {
+                echo "Sto eseguendo: ${params.ENVIRONMENT}"
+            }
+        }
+
+        stage('PRODUCTION') {
+            when {
+                expression { params.ENVIRONMENT == 'PRODUCTION' }
+            }
+            steps {
+                echo "Sto eseguendo: ${params.ENVIRONMENT}"
+            }
+        }
+    }
+}
