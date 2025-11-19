@@ -1,0 +1,20 @@
+- name: Esercizio Ansible Vault e vars_files
+  hosts: localhost
+  connection: local
+
+  # Direttiva per includere le variabili dal file Vault
+  vars_files:
+    - vault_vars.yml
+
+  tasks:
+    - name: Stampa a video il valore di database_host
+      ansible.builtin.debug:
+        msg: "Host del database: {{ database_host }}"
+
+    - name: Stampa a video il valore di database_port
+      ansible.builtin.debug:
+        msg: "Porta del database: {{ database_port }}"
+
+    - name: Stampa a video il valore di secret_key (variabile segreta)
+      ansible.builtin.debug:
+        msg: "Chiave segreta: {{ secret_key }}"
