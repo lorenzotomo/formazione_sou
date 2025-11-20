@@ -1,0 +1,21 @@
+- name: 1 - Gestione Pacchetti tramite Dizionario
+  hosts: all
+  become: true  # Necessario per installare/rimuovere pacchetti
+  
+  vars:
+    # Definisco il dizionario: Pacchetto (key) : Stato (value)
+    pacchetti_da_gestire:
+      git: present
+      vim: present
+      nginx: absent  # Questo verrà rimosso se presente
+      curl: latest
+
+  tasks:
+    - name: Installazione o Rimozione pacchetti in base al dizionario
+      ansible.builtin.package:
+        name: "{{ item.key }}"     # La chiave del dizionario (es. git)
+        state: "{{ item.value }}"  # Il valore del dizionario (es. present)
+      loop: "{{ pacchetti_da_gestire | dict2items }}" 
+
+  # dict2items è un filtro Jinja2 che prende il dizionario pacchetti_da_gestire e lo trasforma in una lista temporanea fatta così: [{key: git, value: present}, {key: nginx, value: absent}, ...]
+  # Nel task, uso item.key per prendere il nome e item.value per decidere cosa farne.
