@@ -1,0 +1,33 @@
+- name: 2 - Creazione Utenti da Lista di Dizionari
+  hosts: all
+  become: true # Necessario per creare utenti
+  
+  vars:
+    # Definisco la lista di dizionari con le specifiche degli utenti
+    utenti_da_creare:
+      - username: carlo
+        gruppo: users
+        shell: /bin/bash
+        commento: "Carlo Developer"
+        
+      - username: luigi
+        gruppo: wheel
+        shell: /bin/sh
+        commento: "Luigi Admin"
+
+    # Ho utilizzato dei gruppi standard (users, wheel) e shell comuni (/bin/bash, /bin/sh)
+
+  tasks:
+   
+    - name: Crea gli utenti specificati
+      ansible.builtin.user:
+        name: "{{ item.username }}"
+        group: "{{ item.gruppo }}"
+        shell: "{{ item.shell }}"
+        comment: "{{ item.commento }}"
+        state: present
+      loop: "{{ utenti_da_creare }}"
+
+  # Il loop scorre la lista utenti_da_creare.
+  # Alla prima iterazione, item prende tutto il blocco di "carlo".
+  # Accedo alle proprietà che ho specificato usando la seguente notazione: item.username, item.gruppo, etc.
