@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  app-bonus:
+    image: alpine
+    command: sleep 3600
+    volumes:
+      - nfs-data-bonus:/data
+
+volumes:
+  nfs-data-bonus:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: "addr=192.168.1.62,rw"
+      device: ":/srv/nfs/share"

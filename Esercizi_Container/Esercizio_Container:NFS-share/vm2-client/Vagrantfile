@@ -1,0 +1,30 @@
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/jammy64"
+  config.vm.hostname = "docker-client"
+
+  config.vm.network "public_network"
+
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = "2048"
+    vb.cpus = 2
+  end
+
+  # Installa Docker e nfs-common per montare le share al primo avvio
+  config.vm.provision "shell", inline: <<-SHELL
+    echo "Aggiornamento Repository"
+    apt-get update
+
+    echo "Installazione Docker e nfs-common"
+    apt-get install -y docker.io nfs-common
+
+    echo "Configurazione Permessi Docker"
+    # Aggiungo l'utente 'vagrant' al gruppo docker
+    usermod -aG docker vagrant
+
+    echo "Avvio Docker"
+    systemctl enable docker
+    systemctl start docker
+
+    echo "VM CLIENT PRONTA"
+  SHELL
+end
