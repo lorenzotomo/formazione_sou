@@ -79,7 +79,7 @@ Creating volume "vagrant_nfs-data-bonus" with local driver
 
 Creating vagrant_app-bonus_1 ... done
 
-Mount diretto
+- Mount diretto
 
 In questa modalità, il container agisce come un host indipendente, prendendo e montando la share NFS direttamente al suo interno. Il container l’ho dovuto avviare con privilegi elevati (--privileged) per poter eseguire comandi di mount e ho dovuto installare al suo interno il client NFS (nfs-common) all’interno del container. Ho fatto tutto da container.
 
