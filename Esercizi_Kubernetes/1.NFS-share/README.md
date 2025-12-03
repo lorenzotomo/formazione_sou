@@ -20,26 +20,27 @@ Fondamentale: Dopo aver avviato il server, è stato necessario recuperare il Clu
 
 kubectl get svc nfs-service
 
-Ho copiato l'IP sotto la colonna CLUSTER-IP che nel mio caso era 10.107.98.215. 
+Ho copiato l'IP sotto la colonna CLUSTER-IP che nel mio caso era 10.107.98.215.
 
-## 2. Modalità A: Direct Volume Mount
+## 2. Modalità A: Direct Volume Mount
 
 In questo scenario, il Pod conosce direttamente l'indirizzo IP del server. È un metodo veloce ma poco flessibile.
 
-Configurazione
+### Configurazione
 
 Nel file pod-nfs-direct.yml, ho modificato la sezione nfs:
 
-YAML
-  nfs:
-    server: 10.107.98.215  # ho inserito l'IP recuperato al punto 1
-    path: /                  # IMPORTANTE: ho usato "/" perché il server usa fsid=0
+YAML nfs: 
 
-Esecuzione
+server: 10.107.98.215 # ho inserito l'IP recuperato al punto 1
+
+path: / # IMPORTANTE: ho usato "/" perché il server usa fsid=0
+
+### Esecuzione
 
 kubectl apply -f pod-nfs-direct.yaml
 
-## 3. Modalità B: Persistent Volume (PV) & PVC 
+## 3. Modalità B: Persistent Volume (PV) & PVC
 
 In questo scenario, ho disaccoppiato la configurazione fisica (PV) dalla richiesta logica (PVC).
 
@@ -69,32 +70,30 @@ kubectl apply -f pod-nfs-pvc.yaml
 
 Per confermare che tutto funzioni e che lo storage sia effettivamente condiviso tra i due Pod:
 
-  - Ho controllato che i Pod fossero Running:
+- Ho controllato che i Pod fossero Running:
 
 kubectl get pods
 
-  - Ho scritto un file dal Pod "PVC":
+- Ho scritto un file dal Pod "PVC":
 
 kubectl exec -it nfs-pod-pvc -- sh -c "echo 'test' > /usr/share/nginx/html/test.txt"
 
-  - Ed ho letto il file dal Pod "Direct":
+- Ed ho letto il file dal Pod "Direct":
 
 kubectl exec -it nfs-pod-direct -- cat /usr/share/nginx/html/test.txt
 
-  - Vedendo "test", è chiaro che i due Pod stavano leggendo dallo stesso disco NFS.
+- Vedendo "test", è chiaro che i due Pod stavano leggendo dallo stesso disco NFS.
 
 ## Problematiche riscontrate
 
 Durante l'esercizio ho dovuto risolvere i seguenti problemi:
 
-  - Compatibilità ARM64:
-
+- Compatibilità ARM64:
 Inizialmente stavo utilizzando un immagine standard gcr.io/google_samples/nfs-server ma non funzionava su Mac.
 
 Soluzione: ho usato itsthenetwork/nfs-server-alpine:latest.
 
-  - Mount Path e fsid=0:
-
+- Mount Path e fsid=0:
 L'immagine server configurava la cartella condivisa con il flag fsid=0. Questo significava che per il client la "radice" del mount era / e non il path fisico /nfsshare.
 
 Soluzione: ho impostato path: / nei file YAML del client, altrimenti avrei ricevuto l'errore MountVolume.SetUp failed: ... No such file or directory.
