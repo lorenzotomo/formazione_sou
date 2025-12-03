@@ -14,7 +14,7 @@ File: nfs-server-setup.yml
 
 Questo file crea un server NFS usando un'immagine compatibile ARM (itsthenetwork/nfs-server-alpine) e lo espone tramite un Service.
 
-kubectl apply -f nfs-server-arm.yaml
+kubectl apply -f nfs-server-setup.yml
 
 Fondamentale: Dopo aver avviato il server, è stato necessario recuperare il ClusterIP assegnato poiché serviva per configurare i client.
 
@@ -30,7 +30,7 @@ In questo scenario, il Pod conosce direttamente l'indirizzo IP del server. È un
 
 Nel file pod-nfs-direct.yml, ho modificato la sezione nfs:
 
-YAML nfs: 
+nfs: 
 
 server: 10.107.98.215 # ho inserito l'IP recuperato al punto 1
 
@@ -38,7 +38,7 @@ path: / # IMPORTANTE: ho usato "/" perché il server usa fsid=0
 
 ### Esecuzione
 
-kubectl apply -f pod-nfs-direct.yaml
+kubectl apply -f pod-nfs-direct.yml
 
 ## 3. Modalità B: Persistent Volume (PV) & PVC
 
@@ -52,19 +52,19 @@ Modificato server: con l'IP del Service NFS.
 
 Modificato path: con /.
 
-kubectl apply -f nfs-pv.yaml
+kubectl apply -f nfs-pv.yml
 
-- Passo 2: Persistent Volume Claim (nfs-pvc.yaml)
+- Passo 2: Persistent Volume Claim (nfs-pvc.yml)
 
 Il Pod richiede spazio generico.
 
-kubectl apply -f nfs-pvc.yaml
+kubectl apply -f nfs-pvc.yml
 
-- Passo 3: Il Pod (pod-nfs-pvc.yaml)
+- Passo 3: Il Pod (pod-nfs-pvc.yml)
 
 Il Pod usa la Claim. Non conosce l'IP del server.
 
-kubectl apply -f pod-nfs-pvc.yaml
+kubectl apply -f pod-nfs-pvc.yml
 
 ## Verifica e Test
 
