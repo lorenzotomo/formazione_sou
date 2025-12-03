@@ -71,38 +71,38 @@ Il Pod usa la Claim. Non conosce l'IP del server.
 Bash
 kubectl apply -f pod-nfs-pvc.yaml
 
-Verifica e Test
+* Verifica e Test
 
 Per confermare che tutto funzioni e che lo storage sia effettivamente condiviso tra i due Pod:
 
-Ho controllato che i Pod fossero Running:
+- Ho controllato che i Pod fossero Running:
 
 Bash
 kubectl get pods
 
-Ho scritto un file dal Pod "PVC":
+- Ho scritto un file dal Pod "PVC":
 
 Bash
 kubectl exec -it nfs-pod-pvc -- sh -c "echo 'test' > /usr/share/nginx/html/test.txt"
 
-Ed ho letto il file dal Pod "Direct":
+- Ed ho letto il file dal Pod "Direct":
 
 Bash
 kubectl exec -it nfs-pod-direct -- cat /usr/share/nginx/html/test.txt
 
-Vedendo "test", è chiaro che i due Pod stavano leggendo dallo stesso disco NFS.
+- Vedendo "test", è chiaro che i due Pod stavano leggendo dallo stesso disco NFS.
 
-Problematiche riscontrate
+* Problematiche riscontrate
 
 Durante l'esercizio ho dovuto risolvere i seguenti problemi:
 
-Compatibilità ARM64:
+- Compatibilità ARM64:
 
 Inizialmente stavo utilizzando un immagine standard gcr.io/google_samples/nfs-server ma non funzionava su Mac.
 
 Soluzione: ho usato itsthenetwork/nfs-server-alpine:latest.
 
-Mount Path e fsid=0:
+- Mount Path e fsid=0:
 
 L'immagine server configurava la cartella condivisa con il flag fsid=0. Questo significava che per il client la "radice" del mount era / e non il path fisico /nfsshare.
 
