@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nfs-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      role: nfs-server
+  template:
+    metadata:
+      labels:
+        role: nfs-server
+    spec:
+      containers:
+      - name: nfs-server
+        image: itsthenetwork/nfs-server-alpine:latest
+        env:
+        - name: SHARED_DIRECTORY
+          value: "/nfsshare" # Dico al server di usare questa cartella
+        ports:
+          - name: nfs
+            containerPort: 2049
+        securityContext:
+          privileged: true # Necessario per NFS
+        volumeMounts:
+          - mountPath: /nfsshare
+            name: mypvc
+      volumes:
+        - name: mypvc
+          emptyDir: {} # Usiamo una directory temporanea come "disco fisico"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nfs-service
+spec:
+  ports:
+    - name: nfs
+      port: 2049
+  selector:
+    role: nfs-server
