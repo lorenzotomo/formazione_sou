@@ -14,15 +14,13 @@ File: nfs-server-setup.yml
 
 Questo file crea un server NFS usando un'immagine compatibile ARM (itsthenetwork/nfs-server-alpine) e lo espone tramite un Service.
 
-Bash
 kubectl apply -f nfs-server-arm.yaml
 
 Fondamentale: Dopo aver avviato il server, è stato necessario recuperare il ClusterIP assegnato poiché serviva per configurare i client.
 
-Bash
 kubectl get svc nfs-service
 
-Ho copiato l'IP sotto la colonna CLUSTER-IP che nel mio caso era 10.107.98.215 
+Ho copiato l'IP sotto la colonna CLUSTER-IP che nel mio caso era 10.107.98.215. 
 
 ## 2. Modalità A: Direct Volume Mount
 
@@ -39,7 +37,6 @@ YAML
 
 Esecuzione
 
-Bash
 kubectl apply -f pod-nfs-direct.yaml
 
 ## 3. Modalità B: Persistent Volume (PV) & PVC 
@@ -54,21 +51,18 @@ Modificato server: con l'IP del Service NFS.
 
 Modificato path: con /.
 
-Bash
 kubectl apply -f nfs-pv.yaml
 
 - Passo 2: Persistent Volume Claim (nfs-pvc.yaml)
 
 Il Pod richiede spazio generico.
 
-Bash
 kubectl apply -f nfs-pvc.yaml
 
 - Passo 3: Il Pod (pod-nfs-pvc.yaml)
 
 Il Pod usa la Claim. Non conosce l'IP del server.
 
-Bash
 kubectl apply -f pod-nfs-pvc.yaml
 
 ## Verifica e Test
@@ -77,17 +71,14 @@ Per confermare che tutto funzioni e che lo storage sia effettivamente condiviso 
 
   - Ho controllato che i Pod fossero Running:
 
-Bash
 kubectl get pods
 
   - Ho scritto un file dal Pod "PVC":
 
-Bash
 kubectl exec -it nfs-pod-pvc -- sh -c "echo 'test' > /usr/share/nginx/html/test.txt"
 
   - Ed ho letto il file dal Pod "Direct":
 
-Bash
 kubectl exec -it nfs-pod-direct -- cat /usr/share/nginx/html/test.txt
 
   - Vedendo "test", è chiaro che i due Pod stavano leggendo dallo stesso disco NFS.
