@@ -15,10 +15,13 @@ Le Network Policies sono state configurate in questo modo:
 Per verificare che le policies fossero attive ho eseguito i seguenti test di connettività:
 
 - kubectl exec -it deploy/frontend -- curl backend  
+
 Frontend --> Backend: OK
 
 - kubectl exec -it deploy/backend -- curl google.com
+
 Backend --> Google (Internet): BLOCCATO (Timeout)
 
 - kubectl exec -it deploy/backend -- nc -zv database 6379
+
 Backend --> Database: OK
