@@ -1,0 +1,74 @@
+# 1. FRONTEND: Parla solo col Backend, accetta tutto dall'esterno
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: frontend-policy
+spec:
+  podSelector:
+    matchLabels:
+      app: frontend
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - {} 
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app: backend
+  - ports:     # Permetto DNS
+    - port: 53
+      protocol: UDP
+    - port: 53
+      protocol: TCP
+
+---
+# 2. BACKEND: Accetta dal Frontend, parla col Database
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: backend-policy
+spec:
+  podSelector:
+    matchLabels:
+      app: backend
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: frontend
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app: database
+  - ports: 
+    - port: 53
+      protocol: UDP
+    - port: 53
+      protocol: TCP
+
+---
+# 3. DATABASE: Accetta solo dal Backend (nell'esercizio era specificato di non farlo comunicare con nulla ma non ne vedevo il senso).
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: database-policy
+spec:
+  podSelector:
+    matchLabels:
+      app: database
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: backend
+    ports:
+    - port: 6379
+      protocol: TCP

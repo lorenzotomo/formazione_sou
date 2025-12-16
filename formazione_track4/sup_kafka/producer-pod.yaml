@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: producer-app
+  namespace: monitoring
+  labels:
+    app: kafka-producer
+spec:
+  containers:
+  - name: producer
+    image: python:3.9-slim
+    command: ["/bin/sh", "-c"]
+    # Installa libreria e lancia script
+    args: ["pip install kafka-python && python -u /scripts/producer.py"]
+    volumeMounts:
+    - name: scripts-vol
+      mountPath: "/scripts"
+  volumes:
+  - name: scripts-vol
+    configMap:
+      name: kafka-scripts
+  restartPolicy: Never

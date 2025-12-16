@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: my-quota
+spec:
+  hard:
+    pods: "5"
+
+    requests.cpu: "500m"    # La somma delle CPU garantite (minime) richieste.
+    requests.memory: 512Mi  # La somma della RAM garantita richiesta.
+
+    limits.cpu: "1"         # Il tetto massimo teorico di potenza di calcolo.
+    limits.memory: 1Gi      # Il tetto massimo teorico di RAM.

@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: consumer-app
+  namespace: monitoring
+  labels:
+    app: kafka-consumer
+spec:
+  containers:
+  - name: consumer
+    image: python:3.9-slim
+    command: ["/bin/sh", "-c"]
+    # Installa libreria e lancia script
+    args: ["pip install kafka-python && python -u /scripts/consumer.py"]
+    volumeMounts:
+    - name: scripts-vol
+      mountPath: "/scripts"
+  volumes:
+  - name: scripts-vol
+    configMap:
+      name: kafka-scripts
+  restartPolicy: Never

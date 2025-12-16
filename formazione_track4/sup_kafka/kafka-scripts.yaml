@@ -1,0 +1,74 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kafka-scripts
+  namespace: monitoring
+data:
+  # SCRIPT DEL PRODUCER
+  producer.py: |
+    from kafka.admin import KafkaAdminClient, NewTopic
+    from kafka import KafkaProducer
+    from kafka.errors import TopicAlreadyExistsError
+    import time
+    import json
+
+    BOOTSTRAP_SERVER = 'my-cluster-kafka-bootstrap.monitoring.svc:9092'
+    TOPIC_NAME = 'foobar'
+
+    # Creazione Topic
+    print("Tentativo creazione topic...")
+    try:
+        admin_client = KafkaAdminClient(bootstrap_servers=BOOTSTRAP_SERVER, client_id='admin_client')
+        topic_list = [NewTopic(name=TOPIC_NAME, num_partitions=1, replication_factor=1)]
+        admin_client.create_topics(new_topics=topic_list, validate_only=False)
+        print(f"Topic {TOPIC_NAME} creato.")
+    except TopicAlreadyExistsError:
+        print(f"Topic {TOPIC_NAME} esiste già.")
+    except Exception as e:
+        print(f"Errore (o topic già esistente): {e}")
+
+    # Loop di invio messaggi
+    producer = KafkaProducer(
+        bootstrap_servers=BOOTSTRAP_SERVER,
+        value_serializer=lambda v: json.dumps(v).encode('utf-8')
+    )
+
+    i = 0
+    while True:
+        message = {'id': i, 'content': f'Messaggio numero {i}'}
+        producer.send(TOPIC_NAME, message)
+        print(f"Inviato: {message}")
+        i += 1
+        time.sleep(1) # Rallento per vedere bene il flusso
+
+  # SCRIPT DEL CONSUMER
+  consumer.py: |
+    from kafka import KafkaConsumer
+    import json
+    import time
+
+    BOOTSTRAP_SERVER = 'my-cluster-kafka-bootstrap.monitoring.svc:9092'
+    TOPIC_NAME = 'foobar'
+    GROUP_ID = 'my-consumer-group' # Fondamentale per vedere il lag
+
+    print("Avvio Consumer...")
+    # Retry loop per aspettare che Kafka sia pronto
+    while True:
+        try:
+            consumer = KafkaConsumer(
+                TOPIC_NAME,
+                bootstrap_servers=BOOTSTRAP_SERVER,
+                auto_offset_reset='earliest',
+                enable_auto_commit=True,
+                group_id=GROUP_ID,
+                value_deserializer=lambda x: json.loads(x.decode('utf-8'))
+            )
+            break
+        except Exception as e:
+            print(f"In attesa di Kafka... ({e})")
+            time.sleep(5)
+
+    print(f"Consumer collegato al topic {TOPIC_NAME}, gruppo {GROUP_ID}")
+
+    for message in consumer:
+        print(f"Ricevuto: {message.value} (Offset: {message.offset})")

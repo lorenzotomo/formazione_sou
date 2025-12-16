@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-dev-eu-deploy
+  labels:
+    environment: dev
+    app: web
+    region: EU
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: web
+      environment: dev
+  template:
+    metadata:
+      labels:
+        app: web
+        environment: dev
+        region: EU
+    spec:
+      containers:
+      - name: web-app
+        image: nginx:latest # Uso nginx come simulazione app web
+        ports:
+        - containerPort: 80

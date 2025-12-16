@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: web-dev-ingress
+  labels:
+    environment: dev
+    app: web
+    region: EU
+spec:
+  ingressClassName: nginx 
+  rules:
+  - host: webapp.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: web-dev-service
+            port:
+              number: 80

@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: logging-daemon
+  labels:
+    app: logging
+spec:
+  selector:
+    matchLabels:
+      app: logging
+  template:
+    metadata:
+      labels:
+        app: logging
+    spec:
+      containers:
+      - name: fluentd-simulator
+        image: busybox
+        args: [/bin/sh, -c, 'while true; do echo "Logging system active..."; sleep 10; done']
